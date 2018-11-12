@@ -76,7 +76,7 @@ TrainError_s = tf.summary.scalar('TrainError', error_rate)
 tvars = tf.trainable_variables()
 
 gradients = tf.gradients(loss, tvars)
-grad, _ = tf.clip_by_global_normgra(gradients, cfg.MaxGradientNorm)
+grad, _ = tf.clip_by_global_norm(gradients, cfg.MaxGradientNorm)
 
 optimizer = tf.train.AdamOptimizer(learning_rate=cfg.LearningRate)
 
