@@ -46,7 +46,7 @@ WND_SHIFT = WND_WIDTH - 2
 
 VEC_PER_WND = WND_WIDTH / math.pow(2, MPoolLayers_H)
 
-phase_train = tf.Variable(True, name='phase_train')
+phase_train = tf.Variable(False, name='phase_train')
 
 x = tf.placeholder(tf.float32, shape=[None, WND_HEIGHT, WND_WIDTH])
 
@@ -73,7 +73,6 @@ session.run(tf.global_variables_initializer())
 LoadModel(session, cfg.SaveDir+'/')
 
 try:
-	session.run(tf.assign(phase_train, False))
 
 	randIxs = range(0, len(InputListTest))
 
