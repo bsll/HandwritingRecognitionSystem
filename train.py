@@ -75,7 +75,8 @@ TrainError_s = tf.summary.scalar('TrainError', error_rate)
 
 tvars = tf.trainable_variables()
 
-grad, _ = tf.clip_by_global_norm(tf.gradients(loss, tvars), cfg.MaxGradientNorm)
+gradients = tf.gradients(loss, tvars)
+grad, _ = tf.clip_by_global_normgra(gradients, cfg.MaxGradientNorm)
 
 optimizer = tf.train.AdamOptimizer(learning_rate=cfg.LearningRate)
 
@@ -125,8 +126,6 @@ try:
 		else: randIxs = range(0, len(inputList))
 
 		start, end = (0, cfg.BatchSize)
-
-		session.run(tf.assign(phase_train, True))
 
 		batch = 0
 		while end <= len(inputList):

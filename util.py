@@ -30,10 +30,14 @@ def batch_norm_conv(x, n_out, phase_train) -> object:
         def mean_var_with_update():
             ema_apply_op = ema.apply([batch_mean, batch_var])
             with tf.control_dependencies([ema_apply_op]):
-                return tf.identity(batch_mean), tf.identity(batch_var)
+                batch_meani = tf.identity(batch_mean)
+                batch_vari = tf.identity(batch_var)
+                return batch_meani, batch_vari
 
+        ema_average_batch_mean = ema.average(batch_mean)
+        ema_average_batch_var = ema.average(batch_var)
         mean, var = tf.cond(phase_train, mean_var_with_update,
-                            lambda: (ema.average(batch_mean), ema.average(batch_var)))
+                            lambda: (ema_average_batch_mean, ema_average_batch_var))
         normed = tf.nn.batch_normalization(x, mean, var, beta, gamma, 1e-3)
     return normed
 
@@ -42,10 +46,12 @@ def weight_variable(shape):
   return tf.Variable(initial)
 
 def conv2d(x, W, stride=(1, 1), padding='SAME'):
-  return tf.nn.conv2d(x, W, strides=[1, stride[0], stride[1], 1], padding=padding)
+  conv =  tf.nn.conv2d(x, W, strides=[1, stride[0], stride[1], 1], padding=padding)
+  return conv
 
 def max_pool(x, ksize=(2, 2), stride=(2, 2)):
-  return tf.nn.max_pool(x, ksize=[1, ksize[0], ksize[1], 1], strides=[1, stride[0], stride[1], 1], padding='SAME')
+  maxpool = tf.nn.max_pool(x, ksize=[1, ksize[0], ksize[1], 1], strides=[1, stride[0], stride[1], 1], padding='SAME')
+  return maxpool
 
 #Ref: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/ctc/ctc_loss_op_test.py
 def target_list_to_sparse_tensor(targetList):

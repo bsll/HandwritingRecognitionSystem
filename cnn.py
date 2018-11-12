@@ -110,7 +110,9 @@ def CNN(X, Training, Scope):
 
 		MPool13_T_RSH = tf.reshape(MPool13_T, [-1, FV, LastFilters])
 
-		return tf.reshape(MPool13_T_RSH, [-1, NFeatures])
+		cnn_res = tf.reshape(MPool13_T_RSH, [-1, NFeatures])
+
+		return cnn_res
 
 def ConvLayer(Input, FilterIn, FilterOut, Training, Scope):
 
@@ -119,8 +121,10 @@ def ConvLayer(Input, FilterIn, FilterOut, Training, Scope):
 		Weight = weight_variable([3, 3, FilterIn, FilterOut])
 
 		if cfg.LeakyReLU == True:
+			leakyRelu = tf.nn.leaky_relu(batch_norm_conv(conv2d(Input, Weight), FilterOut, Training))
 
-			return tf.nn.leaky_relu(batch_norm_conv(conv2d(Input, Weight), FilterOut, Training))
+			return leakyRelu
 		else:
-			return tf.nn.relu(batch_norm_conv(conv2d(Input, Weight), FilterOut, Training))
+			relu = tf.nn.relu(batch_norm_conv(conv2d(Input, Weight), FilterOut, Training))
+			return relu
 
