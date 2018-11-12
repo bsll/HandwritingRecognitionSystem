@@ -34,10 +34,9 @@ def batch_norm_conv(x, n_out, phase_train) -> object:
                 batch_vari = tf.identity(batch_var)
                 return batch_meani, batch_vari
 
-        ema_average_batch_mean = ema.average(batch_mean)
-        ema_average_batch_var = ema.average(batch_var)
         mean, var = tf.cond(phase_train, mean_var_with_update,
-                            lambda: (ema_average_batch_mean, ema_average_batch_var))
+                            lambda: (ema.average(batch_mean), ema.average(batch_var)))
+
         normed = tf.nn.batch_normalization(x, mean, var, beta, gamma, 1e-3)
     return normed
 
